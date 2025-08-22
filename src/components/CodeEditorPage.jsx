@@ -4,7 +4,7 @@ import { useState } from "react";
 import Header from "./Header";
 import CodeEditor from "./CodeEditor";
 import PreviewPanel from "./PreviewPanel";
-import Footer from "./Footer";
+import ResizableSplitter from "./ResizableSplitter";
 import { CODE_SNIPPETS } from "../constants";
 
 const CodeEditorPage = ({ onBackToLanding }) => {
@@ -45,31 +45,31 @@ const CodeEditorPage = ({ onBackToLanding }) => {
         </Flex>
       </Box>
       
-      <Flex h="calc(100vh - 60px - 80px)" overflow="hidden" flex="1">
-        {/* Code Editor Panel */}
-        <Box w="50%" borderRight="1px" borderColor="gray.700">
-          <CodeEditor
-            language={language}
-            code={code}
-            onChange={setCode}
-            onOutputChange={setOutput}
-            onLoadingChange={setLoading}
-          />
-        </Box>
-        
-        {/* Preview/Output Panel */}
-        <Box w="50%">
-          <PreviewPanel
-            language={language}
-            code={code}
-            output={output}
-            loading={loading}
-          />
-        </Box>
-      </Flex>
-
-      {/* Compact Footer */}
-      <Footer />
+      {/* Resizable Splitter Layout - No Footer to prevent cutoff in mobile/tablet preview */}
+      <Box h="calc(100vh - 60px)" overflow="hidden" flex="1">
+        <ResizableSplitter
+          leftPanel={
+            <CodeEditor
+              language={language}
+              code={code}
+              onChange={setCode}
+              onOutputChange={setOutput}
+              onLoadingChange={setLoading}
+            />
+          }
+          rightPanel={
+            <PreviewPanel
+              language={language}
+              code={code}
+              output={output}
+              loading={loading}
+            />
+          }
+          initialLeftWidth={50}
+          minWidth={25}
+          maxWidth={75}
+        />
+      </Box>
     </Box>
   );
 };
