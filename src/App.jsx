@@ -20,7 +20,7 @@ function App() {
         onCodeChange={setCode}
       />
       
-      <Flex h="calc(100vh - 60px - 200px)" overflow="hidden" flex="1">
+      <Flex h="calc(100vh - 60px - 80px)" overflow="hidden" flex="1">
         {/* Code Editor Panel */}
         <Box w="50%" borderRight="1px" borderColor="gray.700">
           <CodeEditor
