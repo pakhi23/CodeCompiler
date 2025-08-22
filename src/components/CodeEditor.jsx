@@ -77,20 +77,30 @@ const CodeEditor = ({ language, code, onChange, onOutputChange, onLoadingChange 
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
     
-    // Custom theme for better experience
+    // Enhanced theme for better visibility and contrast
     monaco.editor.defineTheme('customDark', {
       base: 'vs-dark',
       inherit: true,
       rules: [
-        { token: 'comment', foreground: '6A9955' },
-        { token: 'keyword', foreground: '569CD6' },
-        { token: 'string', foreground: 'CE9178' },
-        { token: 'number', foreground: 'B5CEA8' },
+        { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '4FC3F7', fontStyle: 'bold' },
+        { token: 'string', foreground: '42E2B8' },
+        { token: 'number', foreground: 'FFB74D' },
+        { token: 'identifier', foreground: 'E1F5FE' },
+        { token: 'delimiter', foreground: 'FFECB3' },
       ],
       colors: {
-        'editor.background': '#1a1a1a',
-        'editor.lineHighlightBackground': '#2d2d2d',
-        'editorLineNumber.foreground': '#858585',
+        'editor.background': '#0F1419',
+        'editor.foreground': '#E1F5FE',
+        'editor.lineHighlightBackground': '#1A252F',
+        'editorLineNumber.foreground': '#536DFE',
+        'editorLineNumber.activeForeground': '#42A5F5',
+        'editor.selectionBackground': '#3F51B5',
+        'editor.selectionHighlightBackground': '#424242',
+        'editorCursor.foreground': '#42A5F5',
+        'editorWhitespace.foreground': '#37474F',
+        'editorIndentGuide.background': '#37474F',
+        'editorIndentGuide.activeBackground': '#536DFE',
       }
     });
 
@@ -98,14 +108,20 @@ const CodeEditor = ({ language, code, onChange, onOutputChange, onLoadingChange 
       base: 'vs',
       inherit: true,
       rules: [
-        { token: 'comment', foreground: '008000' },
-        { token: 'keyword', foreground: '0000FF' },
-        { token: 'string', foreground: 'A31515' },
-        { token: 'number', foreground: '098658' },
+        { token: 'comment', foreground: '008000', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '0066CC', fontStyle: 'bold' },
+        { token: 'string', foreground: 'D73A49' },
+        { token: 'number', foreground: '005CC5' },
+        { token: 'identifier', foreground: '24292E' },
       ],
       colors: {
-        'editor.background': '#ffffff',
-        'editor.lineHighlightBackground': '#f5f5f5',
+        'editor.background': '#FFFFFF',
+        'editor.foreground': '#24292E',
+        'editor.lineHighlightBackground': '#F6F8FA',
+        'editorLineNumber.foreground': '#1B1F23',
+        'editorLineNumber.activeForeground': '0366D6',
+        'editor.selectionBackground': '#0366D6',
+        'editorCursor.foreground': '#0366D6',
       }
     });
   };
