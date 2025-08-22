@@ -64,14 +64,13 @@ const OutputConsole = ({ output, loading, language, code }) => {
           {!WEB_LANGUAGES.includes(language) && (
             <Button
               size="sm"
-              leftIcon={<PlayIcon />}
               onClick={runCode}
               isLoading={isLoading}
               loadingText="Running"
               variant="gradient"
               borderRadius="lg"
             >
-              Run
+              ▶ Run
             </Button>
           )}
           
