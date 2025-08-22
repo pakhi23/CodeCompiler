@@ -31,6 +31,12 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
         </html>
       `);
     } else if (language === 'javascript') {
+      // Properly escape the JavaScript code to prevent injection issues
+      const escapedCode = code
+        .replace(/\\/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\${/g, '\\${');
+      
       setPreviewContent(`
         <!DOCTYPE html>
         <html>
@@ -50,34 +56,74 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
               font-family: monospace;
               white-space: pre-wrap;
               margin-top: 10px;
+              max-height: 400px;
+              overflow-y: auto;
             }
             .title {
               color: #333;
               margin-bottom: 10px;
+            }
+            .error {
+              color: #ff6b6b !important;
             }
           </style>
         </head>
         <body>
           <h2 class="title">JavaScript Preview</h2>
           <p>Check the console output below:</p>
-          <div id="console" class="console">Ready to execute JavaScript...\n</div>
+          <div id="console" class="console">Ready to execute JavaScript...\\n</div>
           
           <script>
-            // Override console.log to display in the preview
-            const originalLog = console.log;
-            const consoleDiv = document.getElementById('console');
-            
-            console.log = function(...args) {
-              originalLog.apply(console, args);
-              consoleDiv.textContent += args.join(' ') + '\n';
-            };
-            
-            try {
-              ${code}
-            } catch (error) {
-              consoleDiv.textContent += 'Error: ' + error.message + '\n';
-              consoleDiv.style.color = '#ff6b6b';
-            }
+            (function() {
+              // Clear previous output
+              const consoleDiv = document.getElementById('console');
+              consoleDiv.textContent = '';
+              consoleDiv.className = 'console';
+              
+              // Override console methods to display in the preview
+              const originalLog = console.log;
+              const originalError = console.error;
+              const originalWarn = console.warn;
+              
+              function addToConsole(message, type = 'log') {
+                const timestamp = new Date().toLocaleTimeString();
+                const prefix = type === 'error' ? '❌ ' : type === 'warn' ? '⚠️ ' : '📝 ';
+                consoleDiv.textContent += prefix + message + '\\n';
+                if (type === 'error') {
+                  consoleDiv.classList.add('error');
+                }
+              }
+              
+              console.log = function(...args) {
+                originalLog.apply(console, arguments);
+                addToConsole(args.join(' '), 'log');
+              };
+              
+              console.error = function(...args) {
+                originalError.apply(console, arguments);
+                addToConsole(args.join(' '), 'error');
+              };
+              
+              console.warn = function(...args) {
+                originalWarn.apply(console, arguments);
+                addToConsole(args.join(' '), 'warn');
+              };
+              
+              // Execute user code with proper error handling
+              try {
+                // Use Function constructor to safely execute code
+                const userFunction = new Function(\`${escapedCode}\`);
+                userFunction();
+                
+                // If no output was generated, show a success message
+                if (consoleDiv.textContent === '') {
+                  addToConsole('Code executed successfully (no output)', 'log');
+                }
+              } catch (error) {
+                addToConsole('Error: ' + error.message, 'error');
+                console.error('JavaScript execution error:', error);
+              }
+            })();
           </script>
         </body>
         </html>
