@@ -1,5 +1,5 @@
 // Simple API test for CodePlayground
-const axios = require('axios');
+import axios from 'axios';
 
 const LANGUAGE_VERSIONS = {
   javascript: "18.15.0",
