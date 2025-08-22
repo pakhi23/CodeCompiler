@@ -61,11 +61,12 @@ const ResizableSplitter = ({
 
   return (
     <Box 
+      ref={containerRef}
       display="flex" 
       height="100%" 
       width="100%" 
-      data-resizable-container
       overflow="hidden"
+      position="relative"
     >
       {/* Left Panel */}
       <Box 
@@ -73,31 +74,35 @@ const ResizableSplitter = ({
         minWidth={`${minWidth}%`}
         maxWidth={`${maxWidth}%`}
         overflow="hidden"
-        transition={isResizing ? "none" : "width 0.1s ease"}
+        transition={isResizing ? "none" : "width 0.2s ease"}
+        position="relative"
       >
         {leftPanel}
       </Box>
       
       {/* Resizable Splitter */}
       <Box
-        width="4px"
+        width="6px"
         bg={isResizing ? splitterActiveBg : splitterBg}
         cursor="col-resize"
         position="relative"
+        flexShrink={0}
         _hover={{
           bg: splitterHoverBg,
         }}
         transition="background-color 0.2s ease"
         onMouseDown={startResizing}
+        zIndex={10}
       >
-        {/* Invisible wider hit area for easier grabbing */}
+        {/* Wider invisible hit area for easier grabbing */}
         <Box
           position="absolute"
           top="0"
-          left="-4px"
-          right="-4px"
+          left="-6px"
+          right="-6px"
           bottom="0"
           cursor="col-resize"
+          onMouseDown={startResizing}
         />
         
         {/* Visual indicator dots */}
@@ -108,12 +113,13 @@ const ResizableSplitter = ({
           transform="translate(-50%, -50%)"
           display="flex"
           flexDirection="column"
-          gap="2px"
-          opacity={0.6}
+          gap="3px"
+          opacity={0.8}
+          pointerEvents="none"
         >
-          <Box width="2px" height="2px" bg="white" borderRadius="full" />
-          <Box width="2px" height="2px" bg="white" borderRadius="full" />
-          <Box width="2px" height="2px" bg="white" borderRadius="full" />
+          <Box width="3px" height="3px" bg="white" borderRadius="full" />
+          <Box width="3px" height="3px" bg="white" borderRadius="full" />
+          <Box width="3px" height="3px" bg="white" borderRadius="full" />
         </Box>
       </Box>
       
@@ -123,7 +129,8 @@ const ResizableSplitter = ({
         minWidth={`${100 - maxWidth}%`}
         maxWidth={`${100 - minWidth}%`}
         overflow="hidden"
-        transition={isResizing ? "none" : "width 0.1s ease"}
+        transition={isResizing ? "none" : "width 0.2s ease"}
+        position="relative"
       >
         {rightPanel}
       </Box>
