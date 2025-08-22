@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 
 const ResizableSplitter = ({ 
@@ -10,6 +10,7 @@ const ResizableSplitter = ({
 }) => {
   const [leftWidth, setLeftWidth] = useState(initialLeftWidth);
   const [isResizing, setIsResizing] = useState(false);
+  const containerRef = useRef(null);
 
   const splitterBg = useColorModeValue("gray.300", "gray.600");
   const splitterHoverBg = useColorModeValue("blue.400", "blue.500");
@@ -17,6 +18,7 @@ const ResizableSplitter = ({
 
   const startResizing = useCallback((e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsResizing(true);
   }, []);
 
@@ -25,12 +27,10 @@ const ResizableSplitter = ({
   }, []);
 
   const resize = useCallback((e) => {
-    if (!isResizing) return;
+    if (!isResizing || !containerRef.current) return;
 
-    const container = e.currentTarget.closest('[data-resizable-container]');
-    if (!container) return;
-
-    const containerRect = container.getBoundingClientRect();
+    e.preventDefault();
+    const containerRect = containerRef.current.getBoundingClientRect();
     const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
     
     // Apply constraints
@@ -40,16 +40,21 @@ const ResizableSplitter = ({
 
   useEffect(() => {
     if (isResizing) {
-      document.addEventListener("mousemove", resize);
-      document.addEventListener("mouseup", stopResizing);
+      const handleMouseMove = (e) => resize(e);
+      const handleMouseUp = () => stopResizing();
+      
+      document.addEventListener("mousemove", handleMouseMove, { passive: false });
+      document.addEventListener("mouseup", handleMouseUp);
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
+      document.body.style.overflow = "hidden"; // Prevent scrolling during resize
       
       return () => {
-        document.removeEventListener("mousemove", resize);
-        document.removeEventListener("mouseup", stopResizing);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
         document.body.style.cursor = "";
         document.body.style.userSelect = "";
+        document.body.style.overflow = "";
       };
     }
   }, [isResizing, resize, stopResizing]);
