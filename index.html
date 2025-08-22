@@ -14,7 +14,7 @@
         padding: 0;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
         background: #0a0e1a;
-        overflow: hidden;
+        /* Removed overflow: hidden to allow natural scrolling */
       }
       
       /* Loading animation */
@@ -54,6 +54,12 @@
       .loaded .loading-container {
         opacity: 0;
         pointer-events: none;
+      }
+
+      /* Prevent text selection and scrolling only during splitter resize */
+      .splitter-resizing {
+        user-select: none;
+        overflow: hidden;
       }
     </style>
   </head>

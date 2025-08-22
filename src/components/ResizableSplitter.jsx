@@ -45,16 +45,16 @@ const ResizableSplitter = ({
       
       document.addEventListener("mousemove", handleMouseMove, { passive: false });
       document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
-      document.body.style.overflow = "hidden"; // Prevent scrolling during resize
+      
+      // Apply splitter-specific styles only to body during resize
+      document.body.classList.add("splitter-resizing");
       
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
-        document.body.style.overflow = "";
+        
+        // Remove splitter-specific styles from body
+        document.body.classList.remove("splitter-resizing");
       };
     }
   }, [isResizing, resize, stopResizing]);

@@ -17,9 +17,22 @@ const CodeEditorPage = ({ onBackToLanding }) => {
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
   return (
-    <Box minH="100vh" bg="gray.900" display="flex" flexDirection="column">
+    <Box 
+      minH="100vh" 
+      bg="gray.900" 
+      display="flex" 
+      flexDirection="column"
+      overflow="hidden" // Apply overflow hidden only to the code editor page
+    >
       {/* Enhanced Header with Back Button */}
-      <Box bg={headerBg} borderBottom="1px" borderColor={borderColor} py={2} px={4}>
+      <Box 
+        bg={headerBg} 
+        borderBottom="1px" 
+        borderColor={borderColor} 
+        py={2} 
+        px={4}
+        flexShrink={0} // Prevent header from shrinking
+      >
         <Flex align="center" justify="space-between">
           <HStack spacing={4}>
             <Button
@@ -46,7 +59,12 @@ const CodeEditorPage = ({ onBackToLanding }) => {
       </Box>
       
       {/* Resizable Splitter Layout - No Footer to prevent cutoff in mobile/tablet preview */}
-      <Box h="calc(100vh - 60px)" overflow="hidden" flex="1">
+      <Box 
+        h="calc(100vh - 60px)" 
+        overflow="hidden" 
+        flex="1"
+        position="relative" // Add position relative for proper containment
+      >
         <ResizableSplitter
           leftPanel={
             <CodeEditor
