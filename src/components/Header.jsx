@@ -10,7 +10,7 @@ import {
   Button,
   Tooltip,
 } from "@chakra-ui/react";
-import { MoonIcon, SunIcon, PlayIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { LANGUAGE_VERSIONS, CODE_SNIPPETS } from "../constants";
 
 const Header = ({ language, onLanguageChange, onCodeChange }) => {
