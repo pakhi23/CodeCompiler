@@ -11,7 +11,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { PlayIcon, RepeatIcon } from "@chakra-ui/icons";
+import { RepeatIcon } from "@chakra-ui/icons";
 import { executeCode } from "../api";
 import { WEB_LANGUAGES } from "../constants";
 
