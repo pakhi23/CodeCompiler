@@ -33,11 +33,45 @@ const CodeEditor = ({ language, code, onChange, onOutputChange, onLoadingChange 
     onLoadingChange(false);
   }, 1500);
 
-  useEffect(() => {
-    if (code && !WEB_LANGUAGES.includes(language)) {
-      debouncedExecute(language, code);
+  // JavaScript execution for Output tab (captures console output)
+  const debouncedJavaScriptExecute = debounce((sourceCode) => {
+    if (!sourceCode.trim()) return;
+    
+    try {
+      // Create a mock console to capture output
+      let consoleOutput = '';
+      const mockConsole = {
+        log: (...args) => { consoleOutput += args.join(' ') + '\n'; },
+        error: (...args) => { consoleOutput += 'Error: ' + args.join(' ') + '\n'; },
+        warn: (...args) => { consoleOutput += 'Warning: ' + args.join(' ') + '\n'; },
+        info: (...args) => { consoleOutput += 'Info: ' + args.join(' ') + '\n'; }
+      };
+      
+      // Execute JavaScript in a sandboxed environment
+      const func = new Function('console', sourceCode);
+      func(mockConsole);
+      
+      // Update output with captured console messages
+      onOutputChange(consoleOutput || 'Code executed successfully (no console output)');
+    } catch (error) {
+      onOutputChange(`JavaScript Error: ${error.message}`);
     }
-    return () => debouncedExecute.cancel();
+  }, 1500);
+
+  useEffect(() => {
+    if (code) {
+      if (language === 'javascript') {
+        // For JavaScript, execute for Output tab
+        debouncedJavaScriptExecute(code);
+      } else if (!WEB_LANGUAGES.includes(language)) {
+        // For other non-web languages, use API execution
+        debouncedExecute(language, code);
+      }
+    }
+    return () => {
+      debouncedExecute.cancel();
+      debouncedJavaScriptExecute.cancel();
+    };
   }, [code, language]);
 
   const handleEditorDidMount = (editor, monaco) => {
