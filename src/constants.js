@@ -7,6 +7,8 @@ export const LANGUAGE_VERSIONS = {
   php: "8.2.3",
   c: "10.2.0",
   cpp: "10.2.0",
+  html: "5.0.0",
+  css: "3.0.0",
 };
 
 export const CODE_SNIPPETS = {
