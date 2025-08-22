@@ -1,123 +1,180 @@
-// components/CodeEditor.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import {
   Box,
-  Spinner,
-  Text,
-  Select,
   useColorMode,
-  IconButton,
-  Flex,
   useColorModeValue,
+  Text,
+  HStack,
+  Icon,
 } from "@chakra-ui/react";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { debounce } from "lodash";
 import { executeCode } from "../api";
-import { LANGUAGE_VERSIONS } from "../constants";
-import debounce from "lodash.debounce";
+import { WEB_LANGUAGES } from "../constants";
 
-const DEFAULT_LANGUAGE = "python";
-
-const languageSnippets = {
-  python: `print("Hello from Python")`,
-  javascript: `console.log("Hello from JavaScript");`,
-  cpp: `#include <iostream>\nint main() {\n  std::cout << "Hello from C++";\n  return 0;\n}`,
-  java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello from Java");\n  }\n}`,
-  c: `#include <stdio.h>\nint main() {\n  printf("Hello from C");\n  return 0;\n}`,
-  typescript: `console.log("Hello from TypeScript");`,
-};
-
-export default function CodeEditor() {
-  const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
-  const [code, setCode] = useState(languageSnippets[DEFAULT_LANGUAGE]);
-  const [output, setOutput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { colorMode, toggleColorMode } = useColorMode();
-
-  const runCode = async (lang, src) => {
-    if (!src.trim()) return;
-    setLoading(true);
+const CodeEditor = ({ language, code, onChange, onOutputChange, onLoadingChange }) => {
+  const { colorMode } = useColorMode();
+  const editorRef = useRef(null);
+  
+  const bg = useColorModeValue("white", "gray.900");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  
+  // Debounced execution for non-web languages
+  const debouncedExecute = debounce(async (lang, sourceCode) => {
+    if (!sourceCode.trim() || WEB_LANGUAGES.includes(lang)) return;
+    
+    onLoadingChange(true);
     try {
-      const result = await executeCode(lang, src);
-      setOutput(result.run?.output || "No Output");
-    } catch (err) {
-      setOutput("Error executing code.");
+      const result = await executeCode(lang, sourceCode);
+      onOutputChange(result.run?.output || result.run?.stderr || "No output");
+    } catch (error) {
+      onOutputChange(`Error: ${error.message}`);
     }
-    setLoading(false);
-  };
-
-  const debouncedRunCode = debounce(runCode, 1000);
+    onLoadingChange(false);
+  }, 1500);
 
   useEffect(() => {
-    debouncedRunCode(language, code);
-    return () => debouncedRunCode.cancel();
+    if (code && !WEB_LANGUAGES.includes(language)) {
+      debouncedExecute(language, code);
+    }
+    return () => debouncedExecute.cancel();
   }, [code, language]);
 
-  const handleLanguageChange = (e) => {
-    const selectedLang = e.target.value;
-    setLanguage(selectedLang);
-    setCode(languageSnippets[selectedLang] || "");
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+    
+    // Custom theme for better experience
+    monaco.editor.defineTheme('customDark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '6A9955' },
+        { token: 'keyword', foreground: '569CD6' },
+        { token: 'string', foreground: 'CE9178' },
+        { token: 'number', foreground: 'B5CEA8' },
+      ],
+      colors: {
+        'editor.background': '#1a1a1a',
+        'editor.lineHighlightBackground': '#2d2d2d',
+        'editorLineNumber.foreground': '#858585',
+      }
+    });
+
+    monaco.editor.defineTheme('customLight', {
+      base: 'vs',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '008000' },
+        { token: 'keyword', foreground: '0000FF' },
+        { token: 'string', foreground: 'A31515' },
+        { token: 'number', foreground: '098658' },
+      ],
+      colors: {
+        'editor.background': '#ffffff',
+        'editor.lineHighlightBackground': '#f5f5f5',
+      }
+    });
   };
 
-  const editorBg = useColorModeValue("#f5f5f5", "#1e1e1e");
-  const outputBg = useColorModeValue("gray.100", "gray.800");
-  const borderColor = useColorModeValue("gray.300", "gray.600");
+  const getLanguageForMonaco = (lang) => {
+    const languageMap = {
+      'cpp': 'cpp',
+      'c': 'c',
+      'csharp': 'csharp',
+      'javascript': 'javascript',
+      'typescript': 'typescript',
+      'python': 'python',
+      'java': 'java',
+      'php': 'php',
+      'html': 'html',
+      'css': 'css',
+    };
+    return languageMap[lang] || lang;
+  };
+
+  const getLanguageIcon = (lang) => {
+    const icons = {
+      javascript: '🟨',
+      typescript: '🔷',
+      python: '🐍',
+      java: '☕',
+      csharp: '🔷',
+      php: '🐘',
+      c: '⚡',
+      cpp: '⚡',
+      html: '🌐',
+      css: '🎨',
+    };
+    return icons[lang] || '📄';
+  };
 
   return (
-    <Box>
-      {/* Header Controls */}
-      <Flex justify="space-between" align="center" mb={4}>
-        <Select
-          maxW="200px"
-          value={language}
-          onChange={handleLanguageChange}
-          bg={editorBg}
-          borderColor={borderColor}
-        >
-          {Object.keys(LANGUAGE_VERSIONS).map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </Select>
-
-        <IconButton
-          onClick={toggleColorMode}
-          icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
-          aria-label="Toggle theme"
-          bg={editorBg}
-          borderColor={borderColor}
-        />
-      </Flex>
-
-      {/* Code Editor */}
-      <Editor
-        height="50vh"
-        language={language}
-        value={code}
-        theme={colorMode === "dark" ? "vs-dark" : "light"}
-        onChange={(value) => setCode(value)}
-        options={{
-          fontSize: 14,
-          minimap: { enabled: false },
-          fontFamily: "Fira Code, monospace",
-        }}
-      />
-
-      {/* Console Output */}
-      <Box
-        mt={4}
-        p={4}
-        bg={outputBg}
-        borderRadius="md"
-        borderWidth="1px"
+    <Box h="100%" bg={bg} position="relative">
+      {/* Language Info Bar */}
+      <HStack
+        justify="space-between"
+        align="center"
+        px={4}
+        py={2}
+        borderBottom="1px"
         borderColor={borderColor}
+        bg={useColorModeValue("gray.50", "gray.800")}
       >
-        <Text fontWeight="bold" mb={2}>
-          Console Output:
-        </Text>
-        {loading ? <Spinner /> : <Text whiteSpace="pre-wrap">{output}</Text>}
+        <HStack spacing={2}>
+          <Text fontSize="lg">{getLanguageIcon(language)}</Text>
+          <Text fontSize="sm" fontWeight="medium" textTransform="capitalize">
+            {language === 'cpp' ? 'C++' : language} Editor
+          </Text>
+        </HStack>
+        
+        {WEB_LANGUAGES.includes(language) && (
+          <Text fontSize="xs" color="brand.500" fontWeight="medium">
+            ⚡ Live Preview
+          </Text>
+        )}
+      </HStack>
+
+      {/* Monaco Editor */}
+      <Box h="calc(100% - 50px)">
+        <Editor
+          height="100%"
+          language={getLanguageForMonaco(language)}
+          value={code}
+          theme={colorMode === "dark" ? "customDark" : "customLight"}
+          onChange={(value) => onChange(value || "")}
+          onMount={handleEditorDidMount}
+          options={{
+            fontSize: 14,
+            fontFamily: '"Fira Code", "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace',
+            fontLigatures: true,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            wordWrap: "on",
+            lineNumbers: "on",
+            renderLineHighlight: "all",
+            selectOnLineNumbers: true,
+            automaticLayout: true,
+            tabSize: 2,
+            insertSpaces: true,
+            formatOnPaste: true,
+            formatOnType: true,
+            suggestOnTriggerCharacters: true,
+            acceptSuggestionOnEnter: "on",
+            quickSuggestions: true,
+            parameterHints: { enabled: true },
+            hover: { enabled: true },
+            contextmenu: true,
+            mouseWheelZoom: true,
+            smoothScrolling: true,
+            cursorBlinking: "smooth",
+            cursorSmoothCaretAnimation: true,
+            renderWhitespace: "boundary",
+            bracketPairColorization: { enabled: true },
+          }}
+        />
       </Box>
     </Box>
   );
-}
+};
+
+export default CodeEditor;
