@@ -134,10 +134,34 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
   useEffect(() => {
     if (iframeRef.current && previewContent) {
       const iframe = iframeRef.current;
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      doc.open();
-      doc.write(previewContent);
-      doc.close();
+      
+      // Wait for iframe to be ready
+      const handleIframeLoad = () => {
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          if (doc) {
+            doc.open();
+            doc.write(previewContent);
+            doc.close();
+          }
+        } catch (error) {
+          console.error('Error writing to iframe:', error);
+          // Fallback: use srcdoc attribute
+          iframe.srcdoc = previewContent;
+        }
+      };
+
+      if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+        handleIframeLoad();
+      } else {
+        iframe.addEventListener('load', handleIframeLoad);
+        // Also handle the case where iframe is already loaded
+        setTimeout(handleIframeLoad, 100);
+      }
+      
+      return () => {
+        iframe.removeEventListener('load', handleIframeLoad);
+      };
     }
   }, [previewContent]);
 
