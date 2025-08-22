@@ -5,7 +5,6 @@ import {
   Text,
   Link,
   Avatar,
-  VStack,
   HStack,
   Divider,
   IconButton,
@@ -49,117 +48,92 @@ const Footer = () => {
   ];
 
   return (
-    <Box bg={bg} borderTop="1px" borderColor={borderColor} py={8} mt={8}>
+    <Box bg={bg} borderTop="1px" borderColor={borderColor} py={3}>
       <Container maxW="container.xl">
-        <VStack spacing={6}>
-          {/* Main Content */}
-          <Flex
-            direction={{ base: "column", md: "row" }}
-            align="center"
-            justify="space-between"
-            w="100%"
-            gap={6}
-          >
-            {/* Left Side - Developer Info */}
-            <Flex align="center" gap={4}>
-              <Avatar
-                size="xl"
-                src="https://customer-assets.emergentagent.com/job_live-compiler-fix/artifacts/kom2z8y4_myijmg.jpeg"
-                name="Apurva Soni"
-                border="3px solid"
-                borderColor="blue.500"
-              />
-              <VStack align="start" spacing={1}>
-                <HStack>
-                  <Text fontSize="2xl" fontWeight="bold" color={textColor}>
-                    Apurva Soni
-                  </Text>
-                  <Badge colorScheme="blue" variant="subtle">
-                    Full Stack Developer
-                  </Badge>
-                </HStack>
-                <Text fontSize="sm" color={textColor} opacity={0.8}>
-                  5+ Years of Experience
+        {/* Main Content - Single Row */}
+        <Flex
+          direction={{ base: "column", lg: "row" }}
+          align="center"
+          justify="space-between"
+          w="100%"
+          gap={{ base: 3, lg: 6 }}
+        >
+          {/* Left Side - Developer Info */}
+          <Flex align="center" gap={3}>
+            <Avatar
+              size="md"
+              src="https://customer-assets.emergentagent.com/job_live-compiler-fix/artifacts/kom2z8y4_myijmg.jpeg"
+              name="Apurva Soni"
+              border="2px solid"
+              borderColor="blue.500"
+            />
+            <Flex direction="column" align={{ base: "center", lg: "start" }}>
+              <HStack spacing={2}>
+                <Text fontSize="lg" fontWeight="bold" color={textColor}>
+                  Apurva Soni
                 </Text>
-                <HStack spacing={4} fontSize="sm">
-                  <HStack>
-                    <EmailIcon color={linkColor} />
-                    <Link 
-                      href="mailto:apurvasoni501@gmail.com" 
-                      color={linkColor}
-                      _hover={{ textDecoration: "underline" }}
-                    >
-                      apurvasoni501@gmail.com
-                    </Link>
-                  </HStack>
-                  <HStack>
-                    <PhoneIcon color={linkColor} />
-                    <Text color={textColor}>+91 7073885950</Text>
-                  </HStack>
-                </HStack>
-              </VStack>
-            </Flex>
-
-            {/* Right Side - Social Links */}
-            <VStack align="center" spacing={3}>
-              <Text fontSize="sm" fontWeight="medium" color={textColor}>
-                Connect with me
-              </Text>
-              <HStack spacing={3}>
-                {socialLinks.map((social) => (
-                  <Tooltip key={social.name} label={social.name} placement="top">
-                    <Link href={social.url} isExternal>
-                      <IconButton
-                        aria-label={social.name}
-                        icon={<Text fontSize="20px">{social.icon}</Text>}
-                        size="md"
-                        variant="ghost"
-                        colorScheme="blue"
-                        _hover={{
-                          transform: "translateY(-2px)",
-                          shadow: "lg"
-                        }}
-                        transition="all 0.2s"
-                      />
-                    </Link>
-                  </Tooltip>
-                ))}
+                <Badge size="sm" colorScheme="blue" variant="subtle">
+                  Full Stack Developer
+                </Badge>
               </HStack>
-            </VStack>
+              <HStack spacing={4} fontSize="xs" opacity={0.8}>
+                <HStack spacing={1}>
+                  <EmailIcon boxSize={3} color={linkColor} />
+                  <Link 
+                    href="mailto:apurvasoni501@gmail.com" 
+                    color={linkColor}
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    apurvasoni501@gmail.com
+                  </Link>
+                </HStack>
+                <HStack spacing={1}>
+                  <PhoneIcon boxSize={3} color={linkColor} />
+                  <Text color={textColor}>+91 7073885950</Text>
+                </HStack>
+              </HStack>
+            </Flex>
           </Flex>
 
-          <Divider />
-
-          {/* Bottom Section */}
-          <VStack spacing={2} textAlign="center">
+          {/* Center - Project Info */}
+          <Flex direction="column" align="center" textAlign="center">
             <HStack spacing={2} align="center">
-              <Text fontSize="lg" fontWeight="bold" color={textColor}>
+              <Text fontSize="md" fontWeight="bold" color={textColor}>
                 🚀 CodePlayground
               </Text>
-              <Text fontSize="sm" color={textColor} opacity={0.7}>
-                - Live Code Compiler & Editor
-              </Text>
             </HStack>
-            <Text fontSize="sm" color={textColor} opacity={0.8}>
-              Built with ❤️ using React, Vite, Monaco Editor & Chakra UI
+            <Text fontSize="xs" color={textColor} opacity={0.7}>
+              Built with React, Vite, Monaco Editor & Chakra UI
             </Text>
-            <HStack spacing={1} fontSize="xs" color={textColor} opacity={0.6}>
-              <Text>© 2025 Apurva Soni</Text>
-              <Text>•</Text>
-              <Text>All rights reserved</Text>
-              <Text>•</Text>
-              <Link
-                href="https://youtube.com/@apurvatechstack"
-                isExternal
-                color={linkColor}
-                _hover={{ textDecoration: "underline" }}
-              >
-                ApurvaTechStack
-                <ExternalLinkIcon mx="2px" />
-              </Link>
+          </Flex>
+
+          {/* Right Side - Social Links */}
+          <Flex direction="column" align="center" gap={2}>
+            <HStack spacing={2}>
+              {socialLinks.map((social) => (
+                <Tooltip key={social.name} label={social.name} placement="top">
+                  <Link href={social.url} isExternal>
+                    <IconButton
+                      aria-label={social.name}
+                      icon={<Text fontSize="16px">{social.icon}</Text>}
+                      size="sm"
+                      variant="ghost"
+                      colorScheme="blue"
+                      _hover={{
+                        transform: "translateY(-1px)",
+                        shadow: "md"
+                      }}
+                      transition="all 0.2s"
+                    />
+                  </Link>
+                </Tooltip>
+              ))}
             </HStack>
-          </VStack>
-        </VStack>
+            <Text fontSize="xs" color={textColor} opacity={0.6}>
+              © 2025 Apurva Soni
+            </Text>
+          </Flex>
+        </Flex>
       </Container>
     </Box>
   );
