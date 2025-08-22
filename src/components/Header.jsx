@@ -13,7 +13,7 @@ import {
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { LANGUAGE_VERSIONS, CODE_SNIPPETS } from "../constants";
 
-const Header = ({ language, onLanguageChange, onCodeChange }) => {
+const Header = ({ language, onLanguageChange, onCodeChange, showTitle = true }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   
   const bg = useColorModeValue("white", "gray.800");
