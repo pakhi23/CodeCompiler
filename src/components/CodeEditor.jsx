@@ -194,10 +194,10 @@ const CodeEditor = ({ language, code, onChange, onOutputChange, onLoadingChange 
           onChange={(value) => onChange(value || "")}
           onMount={handleEditorDidMount}
           options={{
-            fontSize: 14,
+            fontSize: 16,
             fontFamily: '"Fira Code", "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace',
             fontLigatures: true,
-            minimap: { enabled: false },
+            minimap: { enabled: true, scale: 1 },
             scrollBeyondLastLine: false,
             wordWrap: "on",
             lineNumbers: "on",
@@ -218,8 +218,29 @@ const CodeEditor = ({ language, code, onChange, onOutputChange, onLoadingChange 
             smoothScrolling: true,
             cursorBlinking: "smooth",
             cursorSmoothCaretAnimation: true,
-            renderWhitespace: "boundary",
+            renderWhitespace: "selection",
             bracketPairColorization: { enabled: true },
+            guides: {
+              bracketPairs: true,
+              bracketPairsHorizontal: true,
+              highlightActiveBracketPair: true,
+              indentation: true,
+            },
+            overviewRulerBorder: false,
+            hideCursorInOverviewRuler: true,
+            occurrencesHighlight: true,
+            selectionHighlight: true,
+            codeLens: true,
+            folding: true,
+            foldingHighlight: true,
+            showFoldingControls: "always",
+            unfoldOnClickAfterEndOfLine: true,
+            dragAndDrop: true,
+            links: true,
+            colorDecorators: true,
+            renderControlCharacters: false,
+            renderIndentGuides: true,
+            renderValidationDecorations: "on",
           }}
         />
       </Box>
