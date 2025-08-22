@@ -3,6 +3,7 @@ import { useState } from "react";
 import Header from "./components/Header";
 import CodeEditor from "./components/CodeEditor";
 import PreviewPanel from "./components/PreviewPanel";
+import Footer from "./components/Footer";
 import { CODE_SNIPPETS } from "./constants";
 
 function App() {
@@ -12,14 +13,14 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   return (
-    <Box minH="100vh" bg="gray.900">
+    <Box minH="100vh" bg="gray.900" display="flex" flexDirection="column">
       <Header 
         language={language}
         onLanguageChange={setLanguage}
         onCodeChange={setCode}
       />
       
-      <Flex h="calc(100vh - 60px)" overflow="hidden">
+      <Flex h="calc(100vh - 60px - 200px)" overflow="hidden" flex="1">
         {/* Code Editor Panel */}
         <Box w="50%" borderRight="1px" borderColor="gray.700">
           <CodeEditor
@@ -41,6 +42,9 @@ function App() {
           />
         </Box>
       </Flex>
+
+      {/* Footer with ownership details */}
+      <Footer />
     </Box>
   );
 }
