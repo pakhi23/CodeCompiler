@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, HStack, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Button, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
 import { useState, useEffect, useRef } from "react";
 import { DEVICE_PRESETS } from "../constants";
