@@ -3,8 +3,8 @@ import { ViewIcon } from "@chakra-ui/icons";
 import { useState, useEffect, useRef } from "react";
 import { DEVICE_PRESETS } from "../constants";
 
-const WebPreview = ({ code, language }) => {
-  const [selectedDevice, setSelectedDevice] = useState('desktop');
+const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
+  const [selectedDevice, setSelectedDevice] = useState(defaultDevice);
   const [previewContent, setPreviewContent] = useState('');
   const iframeRef = useRef(null);
   
@@ -116,7 +116,7 @@ const WebPreview = ({ code, language }) => {
         
         <HStack spacing={2}>
           {Object.entries(DEVICE_PRESETS).map(([key, preset]) => (
-            <IconButton
+            <Button
               key={key}
               size="xs"
               variant={selectedDevice === key ? "solid" : "ghost"}
@@ -130,7 +130,7 @@ const WebPreview = ({ code, language }) => {
             >
               {key === 'desktop' ? '🖥' : key === 'tablet' ? '📱' : key === 'mobile' ? '📱' : 
                key === 'iphone' ? '📱' : '📱'}
-            </IconButton>
+            </Button>
           ))}
           <Text fontSize="xs" color="gray.500" ml={2}>
             {device.name}

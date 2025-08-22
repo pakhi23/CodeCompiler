@@ -8,7 +8,6 @@ import {
   useColorModeValue,
   Code,
   VStack,
-  Icon,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { RepeatIcon } from "@chakra-ui/icons";
