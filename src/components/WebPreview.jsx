@@ -31,11 +31,15 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
         </html>
       `);
     } else if (language === 'javascript') {
-      // Properly escape the JavaScript code to prevent injection issues
+      // More comprehensive escaping for the JavaScript code
       const escapedCode = code
         .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
         .replace(/`/g, '\\`')
-        .replace(/\${/g, '\\${');
+        .replace(/\${/g, '\\${')
+        .replace(/\r?\n/g, '\\n')
+        .replace(/\t/g, '\\t');
       
       setPreviewContent(`
         <!DOCTYPE html>
@@ -86,7 +90,6 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
               const originalWarn = console.warn;
               
               function addToConsole(message, type = 'log') {
-                const timestamp = new Date().toLocaleTimeString();
                 const prefix = type === 'error' ? '❌ ' : type === 'warn' ? '⚠️ ' : '📝 ';
                 consoleDiv.textContent += prefix + message + '\\n';
                 if (type === 'error') {
@@ -111,9 +114,10 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
               
               // Execute user code with proper error handling
               try {
-                // Use Function constructor to safely execute code
-                const userFunction = new Function(\`${escapedCode}\`);
-                userFunction();
+                // Use eval instead of Function constructor for better compatibility
+                (function() { 
+                  eval('${escapedCode}'); 
+                })();
                 
                 // If no output was generated, show a success message
                 if (consoleDiv.textContent === '') {
@@ -121,7 +125,7 @@ const WebPreview = ({ code, language, defaultDevice = 'desktop' }) => {
                 }
               } catch (error) {
                 addToConsole('Error: ' + error.message, 'error');
-                console.error('JavaScript execution error:', error);
+                originalError('JavaScript execution error:', error);
               }
             })();
           </script>
